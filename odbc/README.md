@@ -1,5 +1,5 @@
 ## install unixodbc
-
+Refer to https://github.com/alexbrainman/odbc/wiki/InstallingUnixODBC for installing unixodbc
 ## configure  unixodbc 
 #set environment variables
 ```
@@ -101,7 +101,7 @@ $ make
 </code> </pre>
 
 
-# create table  for running  sample program
+# create table  to run sample program
 <pre><code>
 iSQL>
 
