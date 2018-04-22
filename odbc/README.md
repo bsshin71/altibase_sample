@@ -41,7 +41,7 @@ FileUsage   =1
 </code> </pre>
 
 ## configure  Makefile and Source code 
-#change Makefile value  with your current setting  to find  unix odbc library
+#change variables in Makefile   with your current setting  to find  unix odbc library
 , you might need to change  ODBCLIB  with the  unixodbc library directory that you installed 
 <pre><code>
 CXX = g++
