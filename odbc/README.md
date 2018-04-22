@@ -42,7 +42,7 @@ FileUsage   =1
 
 ## configure  Makefile and Source code 
 #change Makefile value  with your current setting  to find  unix odbc library
-you might need to change  ODBCLIB  with the  unixodbc library directory that you installed 
+, you might need to change  ODBCLIB  with the  unixodbc library directory that you installed 
 <pre><code>
 CXX = g++
 CFLAGS = -D_GNU_SOURCE -W -Wall -pipe -D_POSIX_PTHREAD_SEMANTICS -D_POSIX_THREADS -D_POSIX_THREAD_SAFE_FUNCTIONS -D_REENTRANT -DPDL_
