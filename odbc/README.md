@@ -1,6 +1,8 @@
 ## install unixodbc
 Refer to https://github.com/alexbrainman/odbc/wiki/InstallingUnixODBC for installing unixodbc
 ## configure  unixodbc 
+if you are going to use Driver attriute as a connection string , then don't set the ODBCXXX envrionment variable, just skip the followings.
+if you are set thoese  kinds of things, it cause something bothersome error  like 'invalid attribute or value errors'
 #set environment variables
 ```
 export ALTIBASE_HOME=/home/altibase/altibase_home
@@ -75,7 +77,7 @@ clean:
 #change Driver path  and connection information in sample source code
 <pre><code>
 
-this sample code shows the way to use driver directly, but if you want to use DSN , then just put "DSN=Altiodbc" in connection strings
+this sample code shows the way to use driver directly, but if you want to use DSN , then set ODBC envrionment variables and make configuration file which I described above and the put "DSN=Altiodbc" in connection strings
 ..
 ..............
 ...............
