@@ -1,1 +1,1 @@
-# altibase_sample
+# various sample code stuff for Altibase ~
