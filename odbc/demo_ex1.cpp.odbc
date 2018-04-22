@@ -1,0 +1,133 @@
+#include <sql.h>
+#include <sqlext.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+#define SQL_LEN 1000
+#define MSG_LEN 1024
+
+SQLHENV henv;
+SQLHDBC hdbc;
+SQLHSTMT hstmt;
+SQLRETURN retcode;
+
+void execute_err(SQLHSTMT stat, char* q)
+{
+	printf("Error : %s\n",q);
+	SQLINTEGER errNo;
+	SQLSMALLINT msgLength;
+	SQLTCHAR errMsg[MSG_LEN];
+
+	if (SQL_SUCCESS == SQLError ( henv, hdbc, stat, NULL, &errNo, errMsg, MSG_LEN, &msgLength ))
+	{
+		printf(" Error : # %lld, %s\n", errNo, errMsg);
+	}
+
+	SQLFreeStmt(stat, SQL_DROP);
+	if (SQL_ERROR == SQLDisconnect(hdbc))
+	{
+		printf("disconnect error\n");
+	}
+
+	SQLFreeConnect(hdbc);
+	SQLFreeEnv(henv);
+	exit (1);
+}
+
+int main()
+{
+	char *DSN, *DBNAME, *USERNAME, *PASSWD, *PORTNO;
+	char query[SQL_LEN], name[21];
+	int age;
+	SQLCHAR constr[100];
+	SQLINTEGER len;
+	DSN = "Altiodbc"; // Domain Server Name
+
+	/* Environment 을 위한 메모리를 할당 */
+	if(SQLAllocEnv(&henv) == SQL_ERROR)
+	{
+		printf("AllocEnv error!!\n");
+		exit(1);
+	}
+
+	/* Connection 을 위한 메모리를 할당 */
+	if(SQLAllocConnect(henv, &hdbc) == SQL_ERROR)
+	{
+		printf("AllocDbc error!!\n");
+		SQLINTEGER errNo;
+		SQLSMALLINT msgLength;
+		SQLTCHAR errMsg[MSG_LEN];
+
+		if (SQL_SUCCESS == SQLError ( henv, NULL, NULL, NULL, &errNo, errMsg, MSG_LEN, &msgLength ))
+		{
+			printf(" Error : # %lld, %s\n", errNo, errMsg);
+		}
+		exit(1);
+	}
+
+	/* Connection을 형성 */
+	sprintf((char*)constr, "DSN=%s", DSN);
+	if ( SQLDriverConnect(hdbc, NULL, constr, SQL_NTS, NULL, 0, NULL, SQL_DRIVER_COMPLETE))
+	{
+		printf("DBNAME = %s\n", DBNAME);
+		printf("USERNAME = %s\n", USERNAME);
+		printf("Connection error!!\n");
+		SQLINTEGER errNo;
+		SQLSMALLINT msgLength;
+		SQLTCHAR errMsg[MSG_LEN];
+
+		if (SQL_SUCCESS == SQLError ( henv, hdbc, NULL, NULL, &errNo, errMsg, MSG_LEN, &msgLength ))
+		{
+			printf(" Error : # %lld, %s\n", errNo, errMsg);
+		}
+
+		SQLFreeConnect(hdbc);
+		SQLFreeEnv(henv);
+		exit(1);
+	}
+
+	printf("connected...\n");
+	/* statement을 위한 메모리를 할당 */
+	if ( SQLAllocStmt(hdbc, &hstmt) == SQL_ERROR )
+	{
+		printf("AllocStmt error!!\n");
+		SQLDisconnect(hdbc);
+		SQLFreeConnect(hdbc);
+		SQLFreeEnv(henv);
+		exit(1);
+	}
+
+	/* statement를 준비하고 변수를 바인드한다. */
+	sprintf(query,"INSERT INTO TEST001 VALUES( ?, ? )");
+	if (SQL_ERROR == SQLPrepare(hstmt, (SQLTCHAR*)query, SQL_NTS))
+	{
+		execute_err(hstmt, query);
+	}
+	if (SQL_ERROR == SQLBindParameter(hstmt, 1, SQL_PARAM_INPUT, SQL_C_CHAR, SQL_CHAR, 0, 0, name, 19, &len))
+	{
+		printf("SQLBindParameter error!!! ==> %s \n",query);
+		exit(1);
+	}
+	if (SQL_ERROR == SQLBindParameter(hstmt, 2, SQL_PARAM_INPUT, SQL_C_SLONG, SQL_NUMERIC, 0, 0, &age, 0, &len))
+	{
+		printf("SQLBindParameter error!!! ==> %s \n",query);
+		exit(1);
+	}
+
+	/* 준비된 statement를 수행 */
+	sprintf(name, "김민석");
+	age = 28;
+	if (SQL_ERROR == SQLExecute(hstmt))
+	{
+		execute_err(hstmt, query);
+	}
+
+	/* 모든 handle을 해제하고 접속을 종료 */
+	SQLFreeStmt(hstmt, SQL_DROP);
+	SQLDisconnect(hdbc);
+	SQLFreeConnect(hdbc);
+	SQLFreeEnv(henv);
+
+	return 0;
+}
+
