@@ -101,7 +101,7 @@ $ make
 </code> </pre>
 
 
-# create table  to run sample program
+# create table , before run this sample program
 <pre><code>
 iSQL>
 
