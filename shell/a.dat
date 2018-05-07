@@ -1,0 +1,24 @@
+iSQL> set feedback off;
+iSQL> set linesize 140;
+iSQL> set colsize 20;
+iSQL> select 
+             d.db_name
+            ,v.PRODUCT_VERSION 
+            ,i.STARTUP_PHASE  
+            ,n.NLS_CHARACTERSET
+            ,decode(a.ARCHIVE_MODE,1,'Archive log', 'No archive log') as "Log Mode"
+            ,decode(i.STARTUP_TIME_SEC, 0, '0', to_char( to_date('1970010109','YYYYMMDDHH') +   STARTUP_TIME_SEC/ (60*60*24), 'YYYY/MM/DD HH:MI:SS' ) ) as "DB Up time" 
+from  v$database d
+     ,v$version  v
+     ,v$instance i
+     ,( select NLS_CHARACTERSET
+        from  v$nls_parameters 
+        limit 1
+      ) n
+     , v$archive a
+--end
+;
+DB_NAME               PRODUCT_VERSION       STARTUP_PHASE  NLS_CHARACTERSET      Log Mode        DB Up time            
+------------------------------------------------------------------------------------------------------------------------------
+mydb                  5.3.3.88              SERVICE        KSC5601               No archive log  2018/03/28 19:57:00   
+elapsed time : 0.00
