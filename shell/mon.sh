@@ -80,6 +80,51 @@ run_sql(){
   echo
 }
 
+# SQL Run Function(Version) -------------------
+run_sql_version(){
+
+  dyn_sql_file=`echo $1"."$ALTI_VER_CHK | sed 's/ //g'|awk -F. '{printf "%s_%s.%s", $1,$3,$2}'`
+
+  #echo $dyn_sql_file
+  #read tm
+
+if [ $OS = "SunOS" ] ; then
+    if [ -n -e $MONITOR/sql/$dyn_sql_file  ] ; then
+      echo
+    else
+      #echo "file not exist"
+      dyn_sql_file=$1
+    fi
+else
+  # file exist check
+  if [ -e $MONITOR/sql/$dyn_sql_file  ] ; then
+    echo
+  else
+    #echo "file not exist"
+    dyn_sql_file=$1
+  fi
+fi
+
+ echo "SQL File : " $dyn_sql_file
+
+ $ISQL -f $MONITOR/sql/$dyn_sql_file | grep -v ";" | awk 'BEGIN { prflag=0;} {
+    checkhead=tolower($1);
+    if(checkhead  ~ /sqlend/ ) {
+        prflag=1;
+        next;
+    }
+
+    if( prflag == 1 ) {
+        print $0;
+    }
+}'
+
+  echo
+
+}
+
+
+
 # Start monitor shell --------------------------
 # Shell Check ----------------------------------
 if [ $# -ne 0 ] ;  then
@@ -93,7 +138,7 @@ if [ $# -ne 0 ] ;  then
 fi
 
 # Configuration --------------------------------
-MONITOR=./
+MONITOR=./; export MONITOR
 USER=sys; export USER
 PASS=manager; export PASS
 OS=`uname -s`; export OS
@@ -127,20 +172,20 @@ echo "  1.GENERAL                               |  2.SHARED MEMORY              
 echo " ---------------------------------------- + ----------------------------------------"
 echo "  11 - Instance/Database Info             |  21 - Database Buffer Hit Ratio         "
 echo "  12 - Parameter Info                     |  22 - Shared Cache    Hit Ratio         "
-echo "  13 - Altibase Memory Info               |  23 - Spinlock(Latch) Hit Ratio         "
-echo "  14 - Memory Usage By Each Module        |                                         "
+echo "  13 - Altibase Memory Info               |  23 - Latch Status by Each Tablespace   "
+echo "  14 - Memory Usage by each module        |                                         "
 echo " -----------------------------------------------------------------------------------"
 echo "  3.SESSION                               |  4.WAIT EVENT/LOCK                      "
 echo " ---------------------------------------- + ----------------------------------------"
 echo "  31 - Current Session Info               |  41 - Current Lock Info                 "
 echo "  32 - Current Running Session Info       |  42 - Hierarchical Lock Info            "
-echo "  33 - Current Running Session Wait Info  |  43 - Hierarchical Lock Info(TAC)       "
-echo "  34 - Running Session SQL Info           |  44 - System Event                      "
-echo "  35 - Current Transaction                |  45 - Session Event                     "
-echo "  36 - Open Cursor                        |  46 - Session Wait                      "
-echo "  37 - Current Session(TAC)               |  47 - Sysstat                           "
-echo "  38 - Current Running Session(TAC)       |  48 - Jcntstat                          "
-echo "  39 - Current Running Session Wait(TAC)  |  49 - Redo Nowait Info                  "
+echo "  33 - Current Running Session Wait Info  |  43 - System Event                      "
+echo "  34 - Running Session SQL Info           |  44 - Session Event                     "
+echo "  35 - Current Transaction                |  45 - Session Wait                      "
+echo "  36 - Open Cursor                        |  46 - Sysstat                           "
+echo "                                          |  47 - Prepared Logfile Info             "
+echo "                                          |                                         "
+echo "                                          |                                         "
 echo " -----------------------------------------------------------------------------------"
 echo "  5.SPACE                                 |  6.I/O                                  "
 echo " ---------------------------------------- + ----------------------------------------"
@@ -164,6 +209,7 @@ echo "  93 - Show APM Snapshot                  |  I - Setting SQL_ID Format    
 echo "  94 - Create APM Report                  |  X - EXIT                               "
 echo " -----------------------------------------------------------------------------------"
 echo
+
 if [ $OS = "Linux" ] ; then
   echo -e " Choose the Number or Command : \c "
 elif [ $OS = "SunOS" ] ; then
@@ -227,6 +273,192 @@ echo "======================"
 echo " Memory Usage By Each Module Infomation "
 echo "======================"
 run_sql 1_memstat.sql
+pr_done
+read tm
+;;
+
+
+# 2.SHARED_MEMORY ---------------------------------
+
+21)
+clear
+echo "==========================="
+echo " Database Buffer Hit Ratio "
+echo "==========================="
+run_sql 2_bchr.sql
+pr_done
+read tm
+;;
+
+22)
+clear
+echo "========================"
+echo " Shared Cache Hit Ratio "
+echo "========================"
+run_sql 2_sharedcache.sql
+pr_done
+read tm
+;;
+
+23)
+clear
+echo "========================"
+echo " Latch Status by Each Tablespace "
+echo "========================"
+run_sql 2_latch.sql
+pr_done
+read tm
+;;
+
+31)
+clear
+echo "========================"
+echo " Current Session Info   "
+echo "========================"
+run_sql_version 3_current_session.sql
+pr_done
+read tm
+;;
+
+32)
+clear
+echo "========================"
+echo " Current Running Session Info   "
+echo "========================"
+run_sql_version 3_run_session.sql
+pr_done
+read tm
+;;
+
+33)
+clear
+echo "========================"
+echo " Current Running Session Wait Info   "
+echo "========================"
+run_sql_version 3_run_session_wait.sql 
+pr_done
+read tm
+;;
+
+34)
+clear
+echo "========================"
+echo "  Running Session SQL Info ( Limit 100 )  "
+echo "========================"
+run_sql_version 3_running_sql.sql 
+pr_done
+read tm
+;;
+
+35)
+clear
+echo "========================"
+echo "  Current Transaction ( Limit 100 )  "
+echo "========================"
+run_sql_version 3_current_transaction_5.sql 
+pr_done
+read tm
+;;
+
+36)
+clear
+echo "========================"
+echo "  Current Open Cursor ( Limit 100 )  "
+echo "========================"
+run_sql_version 3_open_cursor.sql 
+pr_done
+read tm
+;;
+
+41)
+clear
+echo "========================"
+echo "   Current Lock Info ( Limit 100 )  "
+echo "========================"
+run_sql_version 4_lockobj_5.sql
+pr_done
+read tm
+;;
+
+42)
+clear
+echo "========================"
+echo "   Hierarchical Lock Info ( Limit 100 )   "
+echo "========================"
+run_sql_version 4_hierarchical_lock_5.sql
+pr_done
+read tm
+;;
+
+43)
+clear
+echo "========================"
+echo "   System Event          "
+echo "========================"
+run_sql_version 4_system_event.sql 
+pr_done
+read tm
+;;
+
+44)
+clear
+sh $MONITOR/sql/4_session_event.sh
+clear
+echo "==============="
+echo " Session Event "
+echo "==============="
+run_sql 4_session_event.sql
+pr_done
+read tm
+;;
+
+45)
+clear
+echo "========================"
+echo "   Session Wait         "
+echo "========================"
+run_sql_version 4_session_wait.sql 
+pr_done
+read tm
+;;
+
+46)
+clear
+echo "========================"
+echo "   Sysstat              "
+echo "========================"
+run_sql_version 4_sysstat.sql 
+pr_done
+read tm
+;;
+
+47)
+clear
+echo "========================"
+echo "   Prepared Logfile Info"
+echo "========================"
+run_sql_version 4_preparedlogfile.sql
+pr_done
+read tm
+;;
+
+51)
+clear
+echo "========================"
+echo "  LogAnchor File Info"
+echo "========================"
+run_sql_version 5_loganchor.sql
+
+echo "========================"
+echo "  LogFile Info"
+echo "========================"
+run_sql_version 5_logfile.sql
+
+echo "========================"
+echo "  DataFile Info"
+echo "========================"
+run_sql_version 5_datafile_5.sql
+
 pr_done
 read tm
 ;;
