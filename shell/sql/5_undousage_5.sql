@@ -1,4 +1,4 @@
-set feedbac off;
+set feedback off;
 set timing off;
 set pagesize 30
 SET LINESIZE 1024;

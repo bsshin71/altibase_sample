@@ -166,7 +166,7 @@ while true
 do
 clear
 pr_version
-echo "  Altibase Version :"$ALTI_VER_CHK "(Long-length column FORMAT: "`cat $MONITOR/sql/sqlid_format.sql`")"
+echo "  Altibase Version :"$ALTI_VER_CHK "(column FORMAT: "`cat $MONITOR/sql/sqlid_format.sql`")"
 echo " -----------------------------------------------------------------------------------"
 echo "  1.GENERAL                               |  2.SHARED MEMORY                        "
 echo " ---------------------------------------- + ----------------------------------------"
@@ -191,8 +191,10 @@ echo "  5.SPACE                                 |  6.I/O                        
 echo " ---------------------------------------- + ----------------------------------------"
 echo "  51 - Database File Info                 |  61 - File I/O Info                     "
 echo "  52 - Tablespace Usage                   |  62 - Session I/O Info                  "
-echo "  53 - Undo Segment Usage                 |  63 - Archivelog Count                  "
-echo "  54 - Temp Segment Usage                 |                                         "
+echo "  53 - Undo Space Total Usage             |  63 - Archivelog info                   "
+echo "  54 - Undo Usage By Segment              |                                         "
+echo "  55 - Undo Activity                      |                                         "
+echo "  56 - Temp Space Total Usage             |                                         "
 echo " -----------------------------------------------------------------------------------"
 echo "  7.OBJECT                                |  8.SQL                                  "
 echo " ---------------------------------------- + ----------------------------------------"
@@ -355,7 +357,7 @@ clear
 echo "========================"
 echo "  Current Transaction ( Limit 100 )  "
 echo "========================"
-run_sql_version 3_current_transaction_5.sql 
+run_sql_version 3_current_transaction.sql 
 pr_done
 read tm
 ;;
@@ -375,7 +377,7 @@ clear
 echo "========================"
 echo "   Current Lock Info ( Limit 100 )  "
 echo "========================"
-run_sql_version 4_lockobj_5.sql
+run_sql_version 4_lockobj.sql
 pr_done
 read tm
 ;;
@@ -385,7 +387,7 @@ clear
 echo "========================"
 echo "   Hierarchical Lock Info ( Limit 100 )   "
 echo "========================"
-run_sql_version 4_hierarchical_lock_5.sql
+run_sql_version 4_hierarchical_lock.sql
 pr_done
 read tm
 ;;
@@ -457,8 +459,108 @@ run_sql_version 5_logfile.sql
 echo "========================"
 echo "  DataFile Info"
 echo "========================"
-run_sql_version 5_datafile_5.sql
+run_sql_version 5_datafile.sql
 
+pr_done
+read tm
+;;
+
+52)
+clear
+echo "========================"
+echo "   Tablespace Usage     "
+echo "========================"
+run_sql_version 5_tbs.sql
+pr_done
+read tm
+;;
+
+53)
+clear
+echo "========================"
+echo "   Undo Space Total Usage   "
+echo "========================"
+run_sql_version 5_undousage.sql
+pr_done
+read tm
+;;
+
+
+54)
+echo "========================"
+echo "   Undo Usage By Segement "
+echo "========================"
+run_sql_version 5_undosegment.sql
+pr_done
+read tm
+;;
+
+55)
+clear
+echo "========================"
+echo "   Undo Activity "
+echo "========================"
+run_sql_version 5_undoactivity.sql
+pr_done
+read tm
+;;
+
+56)
+clear
+echo "========================"
+echo "   Temp Space Total Usage"
+echo "========================"
+run_sql_version 5_temp_tbs.sql
+pr_done
+read tm
+;;
+
+61)
+clear
+echo "========================"
+echo "   File I/O Info        "
+echo "========================"
+run_sql_version 6_fileio.sql 
+pr_done
+read tm
+;;
+
+62)
+clear
+echo "========================"
+echo "   Session I/O Info     "
+echo "========================"
+run_sql_version 6_session_io.sql  
+pr_done
+read tm
+;;
+
+63)
+clear
+echo "========================"
+echo "   Archivelog info      "
+echo "========================"
+run_sql_version  6_archivelog.sql
+pr_done
+read tm
+;;
+
+71)
+clear
+echo "========================"
+echo "   Schema Object Count  "
+echo "========================"
+run_sql_version 7_object_count.sql
+pr_done
+read tm
+;;
+
+72)
+clear
+echo "========================"
+echo "   Object Invalid Count "
+echo "========================"
+run_sql_version 7_invalid_count.sql 
 pr_done
 read tm
 ;;
