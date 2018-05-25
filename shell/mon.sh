@@ -200,7 +200,7 @@ echo "  7.OBJECT                                |  8.SQL                        
 echo " ---------------------------------------- + ----------------------------------------"
 echo "  71 - Schema Object Count                |  81 - SQL Plan(Input SQL_ID)            "
 echo "  72 - Object Invalid Count               |  82 - Top SQL                           "
-echo "  73 - Object Invalid Object              |  83 - Check Static Query Pattern        "
+echo "  73 - Invalid Object List                |  83 - Check Static Query Pattern        "
 echo "  74 - Segment Size(Top 50)               |                                         "
 echo " -----------------------------------------------------------------------------------"
 echo "  9.APM (Use Carefully)                   |  0.OTHER                                "
@@ -561,6 +561,26 @@ echo "========================"
 echo "   Object Invalid Count "
 echo "========================"
 run_sql_version 7_invalid_count.sql 
+pr_done
+read tm
+;;
+
+73)
+clear
+echo "========================"
+echo "   Invalid Object List (MAX 100) "
+echo "========================"
+run_sql_version 7_invalid_object.sql 
+pr_done
+read tm
+;;
+
+74)
+clear
+echo "========================"
+echo "   Segment Size(Top 50) "
+echo "========================"
+run_sql_version 7_segment_size.sql 
 pr_done
 read tm
 ;;
