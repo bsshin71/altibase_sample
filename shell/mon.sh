@@ -113,7 +113,9 @@ fi
         prflag=1;
         next;
     }
-
+    if(checkhead ~ /==/ ) {
+        print $0; 
+    } 
     if( prflag == 1 ) {
         print $0;
     }
@@ -581,6 +583,40 @@ echo "========================"
 echo "   Segment Size(Top 50) "
 echo "========================"
 run_sql_version 7_segment_size.sql 
+pr_done
+read tm
+;;
+
+81)
+clear
+echo "========================"
+echo "   SQL Plan(Input SQL_ID) "
+echo "========================"
+#run_sql_version 7_segment_size.sql 
+echo " Not Prepared yet"
+pr_done
+read tm
+;;
+
+82)
+clear
+echo "========================"
+echo "    Top SQL             "
+echo "========================"
+run_sql_version 8_topquery_by_elaptime.sql 
+run_sql_version 8_topquery_by_gets.sql 
+run_sql_version 8_topquery_by_elapexec.sql 
+pr_done
+read tm
+;;
+
+
+83)
+clear
+echo "========================"
+echo "   Check Static Query Pattern (Top 50) "
+echo "========================"
+run_sql_version 8_check_static_query.sql 
 pr_done
 read tm
 ;;
