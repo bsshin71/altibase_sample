@@ -1,3 +1,21 @@
+# 설치
+
+## go odbc 드라이버 설치
+
+```
+go get github.com/alexbrainman/odbc
+```
+
+https://github.com/alexbrainman/odbc/wiki/GettingStartedOnLinux 참고
+
+
+
+## unixodbc 설치
+
+<https://github.com/alexbrainman/odbc/wiki/InstallingUnixODBC>  참조
+
+
+
 # 환경설정
 
 ## odbc 환경변수 설정
@@ -58,5 +76,4 @@ is -f $ALTIBASE_HOME/sample/SQLCLI/demo_ex1.sql
 ```
 $ go run altidodbc.go
 ```
-
 
