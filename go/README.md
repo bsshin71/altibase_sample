@@ -15,7 +15,7 @@ export ODBCSYSINI=$HOME/odbcinst.ini
 ## odbc.ini 설정
 
 ```
-Altiodbc]
+[Altiodbc]
 Driver          =/home/altibase/altibase_home/lib/libaltibase_odbc-64bit-ul64.so
 Description     =Altibase driver for Linux
 LongDataCompat = on
